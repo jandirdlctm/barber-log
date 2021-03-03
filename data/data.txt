@@ -1,0 +1,9 @@
+service         barber		
+
+id
+firstName
+lastName
+type
+price
+tip
+date

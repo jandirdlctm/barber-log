@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Barber Log</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div id="app" class="wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <h2>BARBER LOG</h2>
+      <!-- <img src="images/barber-logo.png" class="logo-img" alt=""> -->
+      <div v-if="authenticated" class="session-state">
+        <button type="button" v-on:click="signOut">Sign Out</button>
+      </div>
+      <ul>
+        <!-- <li><a href="" v-on:click="contentHome">HOME</a></li>
+        <li><a href="" v-on:click="contentAddService">ADD SERVICE</a></li>
+        <li><a href="" v-on:click="contentShowAll">SHOW ALL</a></li>
+        <li><a href="" v-on:click="contentTotal">TOTAL</a></li> -->
+        <li v-bind:class="{selected : showHomeContent}"><button @click="contentHome">HOME</button></li>
+        <li v-bind:class="{selected : showAddServiceContent}"><button @click="contentAddService">ADD SERVICE</button></li>
+        <li v-bind:class="{selected : showShowAllContent}"><button @click="contentShowAll">SHOW ALL</button></li>
+        <li v-bind:class="{selected : showTotalContent}"><button @click="contentTotal">TOTAL</button></li>
+      </ul>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main_content">
+      <div v-if="showHomeContent" class="home-content">
+        <!-- <h1>HOME</h1> -->
+        <div v-if="authenticated" class="welcome-barber">
+          YOU ARE LOGGED IN
+        </div>
+        <!-- LOGIN PAGE -->
+        <div v-if ="!authenticated" class="form-box">
+          <h1>WELCOME BARBER</h1>
+          <div class="button-box">
+            <div v-bind:class="{ 'btn-login': logInMode, 'btn-register' : registerMode}"></div>
+            <button v-on:click="logInModeOn" type="button" class="login-btn">Log In</button>
+            <button v-on:click="registerModeOn" type="button" class="register-btn">Register</button>
+          </div>
+          <!-- SIGN IN FORM -->
+          <form v-if="logInMode" id="login" class="input-group">
+            <div v-if="logInInputErrorsMode" class="login-errors">
+              <ul>
+                <li v-for="error in logInInputErrors">{{error}}</li>
+              </ul>
+            </div>
+            <input type="text" v-model="logInEmailInput" class="input-field" placeholder="Email">
+            <input type="text" v-model="logInPasswordInput" class="input-field" placeholder="Enter Password">
+            <button type="button" v-on:click="logInBarber" class="submit-btn">Log In</button>
+          </form>
+          <!-- REGISTER FORM -->
+          <form v-if="registerMode" id="register" class="input-group">
+
+            <div v-if="registerSuccess" class="register-success">
+              <p>{{registerSuccessMessage}}</p>
+            </div>
+
+            <div v-if="registerInputErrorsMode" class="register-errors">
+              <ul>
+                <li v-for="error in registerInputErrors">{{error}}</li>
+              </ul>
+            </div>
+
+            <input type="text" v-model="firstNameInput" class="input-field" placeholder="First Name">
+            <input type="text" v-model="lastNameInput" class="input-field" placeholder="Last Name">
+            <!-- <input type="text" v-model="userNameInput" class="input-field" placeholder="Username"> -->
+            <input type="email" v-model="emailInput" class="input-field" placeholder="Enter Email">
+            <input type="password" v-model="passwordInput" class="input-field" placeholder="Enter Password">
+            <!-- <input type="password" class="input-field" placeholder="Confirm Password"> -->
+            <button v-on:click="registerBarber" type="button" class="submit-btn">Register</button>
+          </form>
+        </div>
+      </div>
+      <!-- SHOW SERVICE CONTENT -->
+      <div v-if="showAddServiceContent && authenticated" class="add-service-content">
+        <!-- <h1>ADD CLIENT'S SERVICE</h1> -->
+
+        <div class="add-service-form">
+          <h1>ADD SERVICE</h1>
+          <div v-if="addServiceInputErrorsMode" class="add-service-input-errors">
+            <ul>
+              <li v-for="error in addServiceInputErrors">
+                {{error}}
+              </li>
+            </ul>
+          </div>
+          <div class="txtb">
+            <label>First Name:</label>
+            <input v-model="serviceFirstNameInput" type="text" placeholder="Enter Client's Name">
+          </div>
+          <div class="txtb">
+            <label>Last Name:</label>
+            <input v-model="serviceLastNameInput" type="text" placeholder="Enter Client's Last Name">
+          </div>
+          <div class="txtb">
+            <label>Email:</label>
+            <input v-model="serviceEmailInput" type="text" placeholder="Enter Client's Email">
+          </div>
+          <div class="txtb">
+            <label>Phone Number :</label>
+            <input v-model="servicePhoneNumberInput" type="text" placeholder="Enter Client's Phone Number">
+          </div>
+          <div class="txtb">
+            <label>Type Of Service:</label>
+            <select class="select-input" v-model="serviceTypeSelectedInput">
+              <option value="" disabled>Select Service</option>
+              <option v-for="service in servicesTypes" v-bind:value="service.value">
+                {{ service.text }}
+              </option>
+            </select>
+            <span>Price: ${{serviceTypeSelectedInput}}</span>
+          </div>
+          <!-- <div class="txtb">
+            <label>Tip:</label>
+            <select class="select-input" v-model="tipSelected">
+              <option disabled value="">Please Select Tip</option>
+              <option>$2.00</option>
+              <option>$5.00</option>
+              <option>$10.00</option>
+              <option>$15.00</option>
+            </select>
+          </div> -->
+          <a v-on:click="addServiceSubmitButtonAction" class="submit-service-btn">Submit</a>
+        </div>
+      </div>
+      <div v-if="showShowAllContent && authenticated" class="show-all-content">
+        <h1>Show all</h1>
+        <ul>
+          <li v-for="service in servicesArray">
+            {{service.firstName}}
+            {{service.lastName}}
+            {{service.email}}
+            {{service.phoneNumber}}
+            {{service.price}}
+          </li>
+        </ul>
+      </div>
+      <div v-if="showTotalContent && authenticated" class="total-content">
+        <h1>Show total</h1>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
